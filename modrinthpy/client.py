@@ -2,7 +2,7 @@ import requests
 import logging
 from typing import Dict, List, Tuple, Any, Optional
 from .exceptions import ModrinthAPIError
-from .utils import create_project_payload, create_version_payload, create_project_data, create_version_data, create_dependency
+from .utils import create_project_payload, create_version_payload
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -26,7 +26,6 @@ class ModrinthClient:
             raise ModrinthAPIError(response.status_code, response.text)
         return response.json()
 
-    # Методы для работы с проектами
     def search_projects(self, query: str, **kwargs) -> Dict[str, Any]:
         return self._request("GET", "search", params={"query": query, **kwargs})
 
@@ -47,7 +46,6 @@ class ModrinthClient:
     def delete_project(self, project_id: str) -> Dict[str, Any]:
         return self._request("DELETE", f"project/{project_id}")
 
-    # Методы для работы с версиями
     def get_version(self, version_id: str) -> Dict[str, Any]:
         return self._request("GET", f"version/{version_id}")
 
@@ -62,7 +60,6 @@ class ModrinthClient:
     def delete_version(self, version_id: str) -> Dict[str, Any]:
         return self._request("DELETE", f"version/{version_id}")
 
-    # Методы для работы с пользователями
     def get_user(self, user_id: str) -> Dict[str, Any]:
         return self._request("GET", f"user/{user_id}")
 
@@ -72,18 +69,15 @@ class ModrinthClient:
     def get_user_versions(self, user_id: str) -> List[Dict[str, Any]]:
         return self._request("GET", f"user/{user_id}/versions")
 
-    # Методы для работы с уведомлениями
     def get_notifications(self) -> List[Dict[str, Any]]:
         return self._request("GET", "notifications")
 
     def mark_notification_read(self, notification_id: str) -> Dict[str, Any]:
         return self._request("POST", f"notification/{notification_id}/read")
 
-    # Методы для работы с электронной почтой
     def get_email(self) -> Dict[str, Any]:
         return self._request("GET", "user/email")
 
-    # Методы для работы с выплатами
     def get_payouts(self) -> List[Dict[str, Any]]:
         return self._request("GET", "user/payouts")
 
