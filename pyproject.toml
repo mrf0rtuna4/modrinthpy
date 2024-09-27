@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modrinthpy"
+version = "0.1.0"
+description = "A Python client for the Modrinth API"
+authors = [
+    { name="mrf0rtuna4", email="heypers.team@gmail.com" }
+]
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.6"
+dependencies = [
+    "requests"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/mrf0rtuna4/modrinthpy"
+
+[tool.setuptools]
+packages = ["modrinthpy"]
