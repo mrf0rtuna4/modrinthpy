@@ -10,6 +10,7 @@ class Project:
     def __repr__(self):
         return f"<Project id={self.id} title={self.title}>"
 
+
 class Version:
     def __init__(self, data):
         self.id = data.get("id")
@@ -21,6 +22,7 @@ class Version:
     def __repr__(self):
         return f"<Version id={self.id} name={self.name}>"
 
+
 class User:
     def __init__(self, data):
         self.id = data.get("id")
@@ -31,6 +33,7 @@ class User:
 
     def __repr__(self):
         return f"<User id={self.id} username={self.username}>"
+
 
 class Notification:
     def __init__(self, data):

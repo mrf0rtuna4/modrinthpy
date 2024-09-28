@@ -1,6 +1,10 @@
 import json
+import warnings
 from typing import List, Dict, Union, Optional, Tuple, Any
+
 from requests_toolbelt import MultipartEncoder
+from .models import Project
+
 
 def create_project_payload(project_data: Dict[str, Any]) -> MultipartEncoder:
     """
@@ -14,7 +18,9 @@ def create_project_payload(project_data: Dict[str, Any]) -> MultipartEncoder:
     }
     return MultipartEncoder(fields=fields)
 
-def create_version_payload(version_data: Dict[str, Any], files: List[Tuple[str, Tuple[str, bytes, str]]]) -> MultipartEncoder:
+
+def create_version_payload(
+        version_data: Dict[str, Any], files: List[Tuple[str, Tuple[str, bytes, str]]]) -> MultipartEncoder:
     """
     Creates a payload to create a version of the project. 
     
@@ -31,28 +37,29 @@ def create_version_payload(version_data: Dict[str, Any], files: List[Tuple[str, 
 
     return MultipartEncoder(fields=fields)
 
+
 def create_project_data(
-    title: str,
-    project_type: str,
-    slug: str,
-    description: str,
-    body: str,
-    client_side: str,
-    server_side: str,
-    categories: List[str],
-    additional_categories: Optional[List[str]] = None,
-    issues_url: Optional[str] = None,
-    source_url: Optional[str] = None,
-    wiki_url: Optional[str] = None,
-    discord_url: Optional[str] = None,
-    donation_urls: Optional[List[Dict[str, str]]] = None,
-    license_id: Optional[str] = None,
-    license_url: Optional[str] = None,
-    is_draft: Optional[bool] = None,
-    requested_status: Optional[str] = None,
-    uploaded_images: Optional[List[str]] = None,
-    organization_id: Optional[str] = None,
-    initial_versions: Optional[List[Dict[str, Any]]] = None # DEPRECATED
+        title: str,
+        project_type: str,
+        slug: str,
+        description: str,
+        body: str,
+        client_side: str,
+        server_side: str,
+        categories: List[str],
+        additional_categories: Optional[List[str]] = None,
+        issues_url: Optional[str] = None,
+        source_url: Optional[str] = None,
+        wiki_url: Optional[str] = None,
+        discord_url: Optional[str] = None,
+        donation_urls: Optional[List[Dict[str, str]]] = None,
+        license_id: Optional[str] = None,
+        license_url: Optional[str] = None,
+        is_draft: Optional[bool] = None,
+        requested_status: Optional[str] = None,
+        uploaded_images: Optional[List[str]] = None,
+        organization_id: Optional[str] = None,
+        initial_versions: Optional[List[Dict[str, Any]]] = None  # DEPRECATED
 ) -> Dict[str, Any]:
     """
     ---
@@ -67,9 +74,6 @@ def create_project_data(
     :param client_side: Client-side support.
     :param server_side: Server-side support.
     :param categories: List of project categories.
-
-    Optional
-    ---
     :param additional_categories: Additional categories.
     :param issues_url: Issues Tracking Link.
     :param source_url: Link to source code.
@@ -78,15 +82,26 @@ def create_project_data(
     :param donation_urls: List of donation links.
     :param license_id: Project license ID.
     :param license_url: Link to license.
-    :param is_draft: Flag indicating whether the project is a draft or not.
+    :param is_draft: Flag indicating whether the project is a draft or not (DEPRECTED).
     :param requested_status: Requested project status.
     :param uploaded_images: List of uploaded images.
     :param organization_id: Organization ID.
-    :DEPRECATED param initial_versions: List of initial versions.
+    :param initial_versions: List of initial versions (DEPRECATED).
 
 
     :return: Project data in JSON format.
     """
+    if initial_versions:
+        warnings.warn(
+            "The 'initial_versions' parameter is deprecated and will be removed in future versions. "
+            "Upload version files after initial upload.",
+            DeprecationWarning)
+
+    if is_draft:
+        warnings.warn(
+            "The 'is_draft' parametr is eprecated - please always mark this as True.",
+            DeprecationWarning
+        )
     data = {
         "title": title,
         "project_type": project_type,
@@ -104,13 +119,14 @@ def create_project_data(
         "donation_urls": donation_urls or [],
         "license_id": license_id,
         "license_url": license_url,
-        "is_draft": is_draft,
+        "is_draft": is_draft if is_draft is not None else True,
         "requested_status": requested_status,
         "uploaded_images": uploaded_images or [],
         "organization_id": organization_id,
         "initial_versions": initial_versions or []
     }
     return data
+
 
 def create_donation_url(platform: str, url: str) -> Dict[str, str]:
     """
@@ -125,19 +141,20 @@ def create_donation_url(platform: str, url: str) -> Dict[str, str]:
         "url": url
     }
 
+
 def create_initial_version(
-    name: str,
-    version_number: str,
-    changelog: Optional[str] = None,
-    dependencies: Optional[List[Dict[str, Union[str, None]]]] = None,
-    game_versions: Optional[List[str]] = None,
-    version_type: str = "release",
-    loaders: Optional[List[str]] = None,
-    featured: bool = False,
-    status: str = "listed",
-    requested_status: Optional[str] = None,
-    primary_file: Optional[List[str]] = None,
-    file_types: Optional[List[Dict[str, str]]] = None
+        name: str,
+        version_number: str,
+        changelog: Optional[str] = None,
+        dependencies: Optional[List[Dict[str, Union[str, None]]]] = None,
+        game_versions: Optional[List[str]] = None,
+        version_type: str = "release",
+        loaders: Optional[List[str]] = None,
+        featured: bool = False,
+        status: str = "listed",
+        requested_status: Optional[str] = None,
+        primary_file: Optional[List[str]] = None,
+        file_types: Optional[List[Dict[str, str]]] = None
 ) -> Dict[str, Any]:
     """
     Creates data for the initial version of the project. 
@@ -174,9 +191,11 @@ def create_initial_version(
     return data
 
 
-def create_version_data(name: str, version_number: str, project_id: str, dependencies: List[Dict[str, str]], game_versions: List[str],
+def create_version_data(name: str, version_number: str, project_id: str, dependencies: List[Dict[str, str]],
+                        game_versions: List[str],
                         version_type: str, loaders: List[str], featured: bool, status: str, requested_status: str,
-                        changelog: Optional[str] = None, file_parts: Optional[List[str]] = None, primary_file: Optional[str] = None) -> Dict[str, Any]:
+                        changelog: Optional[str] = None, file_parts: Optional[List[str]] = None,
+                        primary_file: Optional[str] = None) -> Dict[str, Any]:
     """
     Creates data for creating a new version of the project.
 

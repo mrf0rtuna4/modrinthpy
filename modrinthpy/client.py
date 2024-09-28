@@ -1,10 +1,13 @@
-import requests
 import logging
 from typing import Dict, List, Tuple, Any, Optional
+
+import requests
+
 from .exceptions import ModrinthAPIError
 from .utils import create_project_payload, create_version_payload
 
 logging.basicConfig(level=logging.DEBUG)
+
 
 class ModrinthClient:
     BASE_URL = "https://api.modrinth.com/v2"
@@ -49,7 +52,8 @@ class ModrinthClient:
     def get_version(self, version_id: str) -> Dict[str, Any]:
         return self._request("GET", f"version/{version_id}")
 
-    def create_version(self, version_data: Dict[str, Any], files: List[Tuple[str, Tuple[str, bytes, str]]]) -> Dict[str, Any]:
+    def create_version(
+            self, version_data: Dict[str, Any], files: List[Tuple[str, Tuple[str, bytes, str]]]) -> Dict[str, Any]:
         payload = create_version_payload(version_data, files)
         headers = {"Content-Type": payload.content_type}
         return self._request("POST", "version", data=payload, headers=headers)
