@@ -1,11 +1,22 @@
 <div align="center">
-    <image src="https://github.com/user-attachments/assets/c037660a-c363-4794-b805-dfbf7b55f3e3"></image>
+    <image src="https://github.com/user-attachments/assets/c037660a-c363-4794-b805-dfbf7b55f3e3">
     <h1>ModrinthPy</h1>
 </div>
 
-[![PyPI version](https://img.shields.io/pypi/v/modrinthpy)](https://pypi.org/project/modrinthpy/)
-[![License](https://img.shields.io/github/license/mrf0rtuna4/modrinthpy)](https://github.com/mrf0rtuna4/modrinthpy/blob/main/LICENSE)
-[![Python version](https://img.shields.io/pypi/pyversions/modrinthpy)](https://pypi.org/project/modrinthpy/)
+<div align="center">
+    <a href="https://pypi.org/project/modrinthpy/">
+        <img src="https://img.shields.io/pypi/v/modrinthpy">
+    </a>
+    <a href="https://github.com/mrf0rtuna4/modrinthpy/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/mrf0rtuna4/modrinthpy">
+    </a>
+    <a href="https://pypi.org/project/modrinthpy/">
+        <img src="https://img.shields.io/pypi/pyversions/modrinthpy">
+    </a>
+</div>
+
+> [!WARNING]
+> This library is under development and may contain errors!
 
 **ModrinthPy** is an unofficial Python API client for interacting with the [Modrinth](https://modrinth.com/) platform.
 
