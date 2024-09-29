@@ -1,8 +1,7 @@
 from modrinthpy import ModrinthClient
 from modrinthpy.utils import create_project_data, create_donation_url
 
-client = ModrinthClient(
-    api_key="key")
+client = ModrinthClient(api_key="key")
 
 donation_urls = [
     create_donation_url(platform="patreon", url="https://patreon.com/example"),
