@@ -1,40 +1,56 @@
-# ModrinthPy
+<div align="center">
+    <image src="https://github.com/user-attachments/assets/c037660a-c363-4794-b805-dfbf7b55f3e3">
+    <h1>ModrinthPy</h1>
+</div>
 
-[![PyPI version](https://img.shields.io/pypi/v/modrinthpy)](https://pypi.org/project/modrinthpy/)
-[![License](https://img.shields.io/github/license/mrf0rtuna4/modrinthpy)](https://github.com/mrf0rtuna4/modrinthpy/blob/main/LICENSE)
-[![Python version](https://img.shields.io/pypi/pyversions/modrinthpy)](https://pypi.org/project/modrinthpy/)
+<div align="center">
+    <a href="https://pypi.org/project/modrinthpy/">
+        <img src="https://img.shields.io/pypi/v/modrinthpy">
+    </a>
+    <a href="https://github.com/mrf0rtuna4/modrinthpy/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/mrf0rtuna4/modrinthpy">
+    </a>
+    <a href="https://pypi.org/project/modrinthpy/">
+        <img src="https://img.shields.io/pypi/pyversions/modrinthpy">
+    </a>
+</div>
 
-**ModrinthPy** — это неофициальный Python API клиент для взаимодействия с платформой [Modrinth](https://modrinth.com/), которая позволяет пользователям находить и загружать моды для Minecraft.
+> [!WARNING]
+> This library is under development and may contain errors!
 
-## Установка
+**ModrinthPy** is an unofficial Python API client for interacting with the [Modrinth](https://modrinth.com/) platform.
 
-Установить библиотеку можно с помощью pip:
+## Installation 
 
+You can install the library using pip:
 ```bash
 pip install modrinthpy
 ```
 
-## Примеры использования
+## Usage Examples 
 
-### Поиск модов
+### Mod Search 
 
-Вы можете легко искать моды на Modrinth по названию, идентификатору или фильтрам:
+You can easily search for mods on Modrinth by name, ID or filters:
 
 ```python
-import modrinthpy
+import asyncio
+from modrinthpy import AsyncModrinthClient
+from modrinthpy.models import Project
 
-# Инициализация клиента
-client = modrinthpy.Client()
+async def main():
+    project: 'Project'
+    async with AsyncModrinthClient() as client:
+        projects = await client.search_projects("sodium")
+        for project in projects:
+            print(project)
 
-# Поиск мода по названию
-results = client.search_projects("Sodium")
-for project in results.get("hits", []):
-    print(f"{project.get('title')} ({project.get('id')})")
+asyncio.run(main())
 ```
 
-<!--### Получение информации о моде--
+<!--### Getting information about fashion--
 
-Вы также можете получить информацию о конкретном моде, зная его идентификатор:
+You can also get information about a particular mod by knowing its ID:
 
 ```python
 mod = client.get_mod("AANobbMI")
@@ -43,39 +59,34 @@ print(mod.description)
 print(mod.downloads)
 ```
 
-### Скачивание файла мода
+### Downloading a mod file 
 
-Вы можете найти доступные файлы для скачивания и скачать их:
+You can find available downloads and download them:
 
 ```python
 mod = client.get_mod("AANobbMI")
 for version in mod.versions:
     print(version.filename)
-    # Скачивание файла
+    
     client.download_file(version, path="./downloads/")
 ```-->
 
-<!--## Возможности
-
-- Поиск модов по названию, фильтрам и категориям.
-- Получение подробной информации о модах.
-- Скачивание модов и версий модов.
-- Поддержка различных параметров и фильтров для более точного поиска.-->
+<!--### Features - Search for mods by name, filters and categories. - Get detailed information about mods. - Download mods and mod versions. - Support for various parameters and filters for more accurate search.
 
 ## Документация
 
 [Coming soon..]
-<!--Полная документация и примеры использования доступны на [GitHub Pages](https://github.com/mrf0rtuna4/modrinthpy/wiki).-->
+<!--Full documentation and examples of use are available at [GitHub Pages](https://github.com/mrf0rtuna4/modrinthpy/wiki).-->
 
 ## Contributing
 
-Приветствуются все формы участия в проекте! Если вы нашли ошибку или хотите предложить улучшения, создайте `Issue` или сделайте `Pull Request`.
+All forms of participation in the project are welcome! If you find a bug or want to suggest improvements, create an `Issue` or make a `Pull Request`.
 
-1. Форкните репозиторий
-2. Создайте новую ветку для своих изменений (`git checkout -b feature/YourFeature`)
-3. Внесите изменения
-4. Откройте Pull Request
+1. Forks Repository
+2. Create a new branch for your changes (`git checkout -b feature/YourFeature`)
+3. Make the changes
+4. Open Pull Request
 
-## Лицензия
+## License
 
-Этот проект лицензирован под лицензией MIT. Подробнее см. файл [LICENSE](https://github.com/mrf0rtuna4/modrinthpy/blob/main/LICENSE).
+This project is licensed under the MIT license. For more details see file [LICENSE](https://github.com/mrf0rtuna4/modrinthpy/blob/main/LICENSE).
