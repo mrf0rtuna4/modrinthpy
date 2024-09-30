@@ -1,12 +1,12 @@
 import logging
 from typing import Dict, List, Tuple, Any, Optional
 
-import requests
 import aiohttp
 
 from .exceptions import ModrinthAPIError
 from .utils import create_project_payload, create_version_payload
-from .models import Project, Version, User, Notification
+from .models import Project, Version, User, Notification, SearchResult
+from .decorators import check_project
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -17,20 +17,27 @@ class BaseModrinthClient:
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key
 
+    
     def _request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
         raise NotImplementedError
 
-    async def search_projects(self, query: str, **kwargs) -> List[Project]:
-        response = await self._request("GET", "search", params={"query": query, **kwargs})
-        return [Project(item) for item in response.get("hits", [])]
 
-    async def get_project(self, project_id: str) -> Project:
-        response = await self._request("GET", f"project/{project_id}")
+    async def search_projects(self, query: str, **kwargs) -> List[SearchResult]:
+        response = await self._request("GET", "search", params={"query": query, **kwargs})
+        return [SearchResult(item) for item in response.get("hits", [])]
+
+
+    @check_project
+    async def get_project(self, id: str = None, slug: str = None) -> Project:
+        response = await self._request("GET", f"project/{id or slug}")
         return Project(response)
 
-    async def get_project_versions(self, project_id: str) -> List[Version]:
-        response = await self._request("GET", f"project/{project_id}/version")
+    
+    @check_project
+    async def get_project_versions(self, id: str = None, slug: str = None) -> List[Version]:
+        response = await self._request("GET", f"project/{id or slug}/version")
         return [Version(item) for item in response]
+
 
     async def create_project(self, data: Dict[str, Any]) -> Project:
         payload = create_project_payload(data)
@@ -92,32 +99,7 @@ class BaseModrinthClient:
         return await self._request("POST", "user/payouts/request")
 
 
-class ModrinthClient(BaseModrinthClient): # DEPRECATED
-    def __init__(self, api_key: Optional[str] = None):
-        super().__init__(api_key)
-        self.session = requests.Session()
-        if api_key:
-            self.session.headers.update({"Authorization": api_key})
-
-    def _request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
-        url = f"{self.BASE_URL}/{endpoint}"
-        logging.debug(f"Request URL: {url}")
-        logging.debug(f"Request Method: {method}")
-        logging.debug(f"Request Headers: {kwargs.get('headers', {})}")
-        logging.debug(f"Request Data: {kwargs.get('data', {})}")
-        response = self.session.request(method, url, **kwargs)
-        if response.status_code != 200:
-            raise ModrinthAPIError(response.status_code, response.text)
-        return response.json()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.session.close()
-
-
-class AsyncModrinthClient(BaseModrinthClient):
+class ModrinthClient(BaseModrinthClient):
     def __init__(self, api_key: Optional[str] = None):
         super().__init__(api_key)
         self.session = None

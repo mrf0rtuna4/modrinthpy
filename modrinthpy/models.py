@@ -1,147 +1,205 @@
-from typing import List, Dict, Optional, Any
+from typing import List, Optional, Dict, Any
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-class Project:
-    def __init__(self, data):
-        self.id = data.get("id")
-        self.slug = data.get("slug")
-        self.title = data.get("title")
-        self.description = data.get("description")
-        self.categories = data.get("categories", [])
-        self.versions = data.get("versions", [])
-        self.client_side = data.get("client_side")
-        self.server_side = data.get("server_side")
-        self.body = data.get("body")
-        self.status = data.get("status")
-        self.requested_status = data.get("requested_status")
-        self.additional_categories = data.get("additional_categories", [])
-        self.issues_url = data.get("issues_url")
-        self.source_url = data.get("source_url")
-        self.wiki_url = data.get("wiki_url")
-        self.discord_url = data.get("discord_url")
-        self.donation_urls = [DonationUrl(d) for d in data.get("donation_urls", [])]
-        self.project_type = data.get("project_type")
-        self.downloads = data.get("downloads")
-        self.icon_url = data.get("icon_url")
-        self.color = data.get("color")
-        self.thread_id = data.get("thread_id")
-        self.monetization_status = data.get("monetization_status")
-        self.team = data.get("team")
-        self.body_url = data.get("body_url")
-        self.moderator_message = data.get("moderator_message")
-        self.published = data.get("published")
-        self.updated = data.get("updated")
-        self.approved = data.get("approved")
-        self.queued = data.get("queued")
-        self.followers = data.get("followers")
-        self.license = License(data.get("license", {}))
-        self.game_versions = data.get("game_versions", [])
-        self.loaders = data.get("loaders", [])
-        self.gallery = [GalleryItem(g) for g in data.get("gallery", [])]
+class BaseModelWithAutoMapping:
+    def __init__(self, data: Optional[Dict[str, Any]] = None, **kwargs):
+        """
+        Initialize the model. Supports both dictionary data and keyword arguments.
 
-    def __repr__(self):
-        return f"<Project id={self.id} title={self.title}>"
+        :param data: A dictionary with field names and values.
+        :param kwargs: Field names and values as keyword arguments.
+        """
+        cls = self.__class__
+        hints = getattr(cls, '__annotations__', {})
 
+        if data:
+            for key, value in data.items():
+                if key in hints:
+                    setattr(self, key, value)
+                else:
+                    logger.warning(
+                        f"Unknown field '{key}' for class '{cls.__name__}'")
 
-class Version:
-    def __init__(self, data: Dict[str, Any]):
-        self.name: str = data.get("name")
-        self.version_number: str = data.get("version_number")
-        self.changelog: str = data.get("changelog")
-        self.dependencies: List[Dependency] = [Dependency(d) for d in data.get("dependencies", [])]
-        self.game_versions: List[str] = data.get("game_versions", [])
-        self.version_type: str = data.get("version_type")
-        self.loaders: List[str] = data.get("loaders", [])
-        self.featured: bool = data.get("featured")
-        self.status: str = data.get("status")
-        self.requested_status: str = data.get("requested_status")
-        self.id: str = data.get("id")
-        self.project_id: str = data.get("project_id")
-        self.author_id: str = data.get("author_id")
-        self.date_published: str = data.get("date_published")
-        self.downloads: int = data.get("downloads")
-        self.changelog_url: Optional[str] = data.get("changelog_url")
-        self.files: List[File] = [File(f) for f in data.get("files", [])]
+        for key, value in kwargs.items():
+            if key in hints:
+                setattr(self, key, value)
+            else:
+                logger.warning(
+                    f"Unknown field '{key}' for class '{cls.__name__}'")
 
-    def __repr__(self):
-        return f"<Version id={self.id} name={self.name}>"
+        for key in hints:
+            if not hasattr(self, key):
+                setattr(self, key, None)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]):
+        return cls(data)
+
+    def to_dict(self):
+        """
+        Converts the model instance into a dictionary, including only the annotated attributes.
+        """
+        cls = self.__class__
+        hints = getattr(cls, '__annotations__', {})
+        return {key: getattr(self, key, None) for key in hints}
+
+    def __repr__(self) -> str:
+        annotations = list(self.__annotations__.keys())[:3]
+        repr_str = ", ".join([f"{key}={getattr(self, key, None)}" for key in annotations])
+        return f"<{self.__class__.__name__} {repr_str}>"
 
 
-class User:
-    def __init__(self, data: Dict[str, Any]):
-        self.id: str = data.get("id")
-        self.username: str = data.get("username")
-        self.name: str = data.get("name")
-        self.email: str = data.get("email")
-        self.payouts_enabled: bool = data.get("payouts_enabled")
-
-    def __repr__(self):
-        return f"<User id={self.id} username={self.username}>"
+class DonationUrl(BaseModelWithAutoMapping):
+    id: Optional[str]
+    platform: Optional[str]
+    url: Optional[str]
 
 
-class Notification:
-    def __init__(self, data: Dict[str, Any]):
-        self.id: str = data.get("id")
-        self.type: str = data.get("type")
-        self.message: str = data.get("message")
-        self.read: bool = data.get("read")
-
-    def __repr__(self):
-        return f"<Notification id={self.id} type={self.type}>"
+class License(BaseModelWithAutoMapping):
+    id: Optional[str]
+    name: Optional[str]
+    url: Optional[str]
 
 
-class DonationUrl:
-    def __init__(self, data: Dict[str, Any]):
-        self.id: str = data.get("id")
-        self.platform: str = data.get("platform")
-        self.url: str = data.get("url")
-
-    def __repr__(self):
-        return f"<DonationUrl id={self.id} platform={self.platform}>"
-
-
-class License:
-    def __init__(self, data: Dict[str, Any]):
-        self.id: data.get("id")
-        self.name: data.get("name")
-        self.url: data.get("url")
-
-    def __repr__(self):
-        return f"<License id={self.id} name={self.name}>"
+class GalleryItem(BaseModelWithAutoMapping):
+    url: Optional[str]
+    featured: Optional[bool]
+    title: Optional[str]
+    description: Optional[str]
+    created: Optional[str]
+    ordering: Optional[int]
 
 
-class GalleryItem:
-    def __init__(self, data: Dict[str, Any]):
-        self.url: data.get("url")
-        self.featured: data.get("featured")
-        self.title: data.get("title")
-        self.description: data.get("description")
-        self.created: data.get("created")
-        self.ordering: data.get("ordering")
+class Project(BaseModelWithAutoMapping):
+    id: str
+    slug: str
+    title: Optional[str]
+    description: Optional[str]
+    categories: List[str]
+    versions: List[str]
+    client_side: Optional[bool]
+    server_side: Optional[bool]
+    body: Optional[str]
+    status: Optional[str]
+    requested_status: Optional[str]
+    additional_categories: List[str]
+    issues_url: Optional[str]
+    source_url: Optional[str]
+    wiki_url: Optional[str]
+    discord_url: Optional[str]
+    donation_urls: List[DonationUrl]
+    project_type: Optional[str]
+    downloads: Optional[int]
+    icon_url: Optional[str]
+    color: Optional[str]
+    thread_id: Optional[str]
+    monetization_status: Optional[str]
+    team: Optional[str]
+    body_url: Optional[str]
+    moderator_message: Optional[str]
+    published: Optional[str]
+    updated: Optional[str]
+    approved: Optional[bool]
+    queued: Optional[bool]
+    followers: Optional[int]
+    license: License
+    game_versions: List[str]
+    loaders: List[str]
+    gallery: List[GalleryItem]
 
-    def __repr__(self):
-        return f"<GalleryItem title={self.title} featured={self.featured}>"
+
+class Version(BaseModelWithAutoMapping):
+    name: str
+    version_number: str
+    changelog: Optional[str]
+    dependencies: List['Dependency']
+    game_versions: List[str]
+    version_type: Optional[str]
+    loaders: List[str]
+    featured: Optional[bool]
+    status: Optional[str]
+    requested_status: Optional[str]
+    id: str
+    project_id: str
+    author_id: str
+    date_published: Optional[str]
+    downloads: Optional[int]
+    changelog_url: Optional[str]
+    files: List['File']
 
 
-class Dependency:
-    def __init__(self, data: Dict[str, Any]):
-        self.version_id: str = data.get("version_id")
-        self.project_id: str = data.get("project_id")
-        self.file_name: str = data.get("file_name")
-        self.dependency_type: str = data.get("dependency_type")
+class User(BaseModelWithAutoMapping):
+    id: str
+    username: str
+    name: str
+    bio: Optional[str]
+    email: Optional[str]
+    payout_data: Optional['PayoutData']
+    avatar_url: Optional[str]
+    created: Optional[str]
+    role: Optional[str]
+    badges: Optional[int]
+    auth_providers: Optional[List[str]]
+    email_verified: Optional[bool]
+    has_password: Optional[bool]
+    has_totp: Optional[bool]
 
-    def __repr__(self):
-        return f"<Dependency version_id={self.version_id} project_id={self.project_id}>"
+
+class Notification(BaseModelWithAutoMapping):
+    id: str
+    type: str
+    message: str
+    read: bool
 
 
-class File:
-    def __init__(self, data: Dict[str, Any]):
-        self.hashes: Dict[str, str] = data.get("hashes", {})
-        self.url: str = data.get("url")
-        self.filename: str = data.get("filename")
-        self.primary: bool = data.get("primary")
-        self.size: int = data.get("size")
-        self.file_type: str = data.get("file_type")
+class Dependency(BaseModelWithAutoMapping):
+    version_id: str
+    project_id: str
+    file_name: Optional[str]
+    dependency_type: str
 
-    def __repr__(self):
-        return f"<File filename={self.filename} primary={self.primary}>"
+
+class File(BaseModelWithAutoMapping):
+    hashes: Dict[str, str]
+    url: str
+    filename: str
+    primary: bool
+    size: int
+    file_type: str
+
+
+class PayoutData(BaseModelWithAutoMapping):
+    balance: Optional[int]
+    payout_wallet: Optional[str]
+    payout_wallet_type: Optional[str]
+    payout_address: Optional[str]
+
+
+class SearchResult(BaseModelWithAutoMapping):
+    slug: str
+    title: str
+    description: Optional[str]
+    categories: List[str]
+    client_side: Optional[str]
+    server_side: Optional[str]
+    project_type: Optional[str]
+    downloads: Optional[int]
+    icon_url: Optional[str]
+    color: Optional[int]
+    thread_id: Optional[str]
+    monetization_status: Optional[str]
+    project_id: Optional[str]
+    author: Optional[str]
+    display_categories: List[str]
+    versions: List[str]
+    follows: Optional[int]
+    date_created: Optional[str]
+    date_modified: Optional[str]
+    latest_version: Optional[str]
+    license: Optional[str]
+    gallery: List[str]
+    featured_gallery: Optional[str]

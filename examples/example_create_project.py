@@ -1,15 +1,10 @@
 from modrinthpy import ModrinthClient
-from modrinthpy.utils import create_project_data, create_donation_url
+from modrinthpy.models import Project
+import asyncio
 
 client = ModrinthClient(api_key="key")
 
-donation_urls = [
-    create_donation_url(platform="patreon", url="https://patreon.com/example"),
-    create_donation_url(platform="paypal", url="https://paypal.me/example")
-]
-
-
-project_data = create_project_data(
+project = Project(
     title="My New Project",
     project_type="mod",
     slug="my-new-project",
@@ -30,5 +25,4 @@ project_data = create_project_data(
     organization_id=None,
 )
 
-new_project = client.create_project(project_data)
-print(new_project)
+new_project = asyncio.run(client.create_project(project))
