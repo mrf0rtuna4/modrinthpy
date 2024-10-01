@@ -6,6 +6,7 @@ import aiohttp
 from .exceptions import ModrinthAPIError
 from .utils import create_project_payload, create_version_payload
 from .models import Project, Version, User, Notification, SearchResult
+from .objects import CreatableProject
 from .decorators import check_project
 
 logging.basicConfig(level=logging.DEBUG)
@@ -41,8 +42,7 @@ class BaseModrinthClient:
 
     async def create_project(self, data: Dict[str, Any]) -> Project:
         payload = create_project_payload(data)
-        headers = {"Content-Type": payload.content_type}
-        response = await self._request("POST", "project", data=payload, headers=headers)
+        response = await self._request("POST", "project", data=payload)
         return Project(response)
 
     async def update_project(self, project_id: str, data: Dict[str, Any]) -> Project:

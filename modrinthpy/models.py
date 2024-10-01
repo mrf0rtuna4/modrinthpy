@@ -45,7 +45,10 @@ class BaseModelWithAutoMapping:
         """
         cls = self.__class__
         hints = getattr(cls, '__annotations__', {})
-        return {key: getattr(self, key, None) for key in hints}
+        return {
+            key: getattr(self, key, getattr(cls, key, None)) for key in hints
+        }
+
 
     def __repr__(self) -> str:
         annotations = list(self.__annotations__.keys())[:3]

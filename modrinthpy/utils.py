@@ -1,21 +1,26 @@
 import json
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Any
 
 from requests_toolbelt import MultipartEncoder
 from .models import Project, Version
+from .objects import CreatableProject
+from aiohttp import FormData
+import json
 
-
-def create_project_payload(project: Project) -> MultipartEncoder:
+def create_project_payload(project: CreatableProject) -> FormData:
     """
-    Creates a payload to create a project. 
-    
+    Creates a payload to create a project.
+
     :param project: An instance of the Project model.
-    :return: MultipartEncoder to send in the request.
+    :return: FormData to send in the request.
     """
-    fields = {
-        'data': (None, json.dumps(project.to_dict()), 'application/json'),
-    }
-    return MultipartEncoder(fields=fields)
+    fields = FormData()
+
+    fields.add_field('data', json.dumps(project.to_dict()), content_type='application/json')
+
+    # fields.add_field('icon', open('path_to_icon.png', 'rb'), filename='icon.png', content_type='image/png')
+
+    return fields
 
 
 def create_version_payload(version: Version, files: List[Tuple[str, Tuple[str, bytes, str]]]) -> MultipartEncoder:
