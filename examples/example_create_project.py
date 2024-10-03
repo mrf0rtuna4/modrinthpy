@@ -1,10 +1,8 @@
-from modrinthpy import ModrinthClient
-from modrinthpy.models import Project
-import asyncio
+from modrinthpy import ModrinthClient, CreatableProject
 
-client = ModrinthClient(api_key="key")
+client = ModrinthClient(api_key="KEY")
 
-project = Project(
+project = CreatableProject(
     title="My New Project",
     project_type="mod",
     slug="my-new-project",
@@ -20,9 +18,8 @@ project = Project(
     license_id="MIT",
     license_url="https://opensource.org/licenses/MIT",
     is_draft=True, 
-    requested_status="unlisted",
-    uploaded_images=[],
-    organization_id=None,
+    requested_status="draft"
 )
 
-new_project = asyncio.run(client.create_project(project))
+
+client.run(client.create_project(project))

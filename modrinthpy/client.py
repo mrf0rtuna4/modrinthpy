@@ -2,6 +2,7 @@ import logging
 from typing import Dict, List, Tuple, Any, Optional
 
 import aiohttp
+import asyncio
 
 from .exceptions import ModrinthAPIError
 from .utils import create_project_payload, create_version_payload
@@ -119,6 +120,23 @@ class ModrinthClient(BaseModrinthClient):
             if response.status != 200:
                 raise ModrinthAPIError(response.status, await response.text())
             return await response.json()
+
+    async def start(self):
+        if not self.session:
+            self.session = aiohttp.ClientSession()
+            if self.api_key:
+                self.session.headers.update({"Authorization": self.api_key})
+
+    async def close(self):
+        if self.session:
+            await self.session.close()
+
+    def run(self, coro):
+        try:
+            asyncio.run(coro)
+        finally:
+            if self.session and not self.session.closed:
+                asyncio.run(self.close())
 
     async def __aenter__(self):
         return self
