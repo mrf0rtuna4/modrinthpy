@@ -23,6 +23,7 @@ class CreatableProject(BaseModelWithAutoMapping):
     is_draft: Optional[bool] = True
     gallery_items: Optional[List[str]] = []
     icon: Optional[str] = None
+    initial_versions: Optional[Dict] = []
 
     def __init__(self, data: Optional[dict] = None, **kwargs):
         super().__init__(data, **kwargs)

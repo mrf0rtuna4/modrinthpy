@@ -113,6 +113,7 @@ class Project(BaseModelWithAutoMapping):
     game_versions: List[str]
     loaders: List[str]
     gallery: List[GalleryItem]
+    organization: Any
 
 
 class Version(BaseModelWithAutoMapping):
