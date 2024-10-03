@@ -34,41 +34,51 @@ pip install modrinthpy
 You can easily search for mods on Modrinth by name, ID or filters:
 
 ```python
-import asyncio
-from modrinthpy import AsyncModrinthClient
-from modrinthpy.models import Project
+from modrinthpy import ModrinthClient
 
-async def main():
-    project: 'Project'
-    async with AsyncModrinthClient() as client:
-        projects = await client.search_projects("sodium")
-        for project in projects:
-            print(project)
+client = ModrinthClient()
 
-asyncio.run(main())
+def display_search_results(results):
+    if not results:
+        print("No projects found.")
+    else:
+        print(f"Found {len(results)} projects:")
+        for project in results:
+            print(f"Slug: {project.slug} | Title: {project.title}")
+
+async def run_search(search_query):
+    results = await client.search_projects(search_query)
+    display_search_results(results)
+
+search = input("Write Prompt: ")
+
+client.run(run_search(search))
 ```
 
-<!--### Getting information about fashion--
+### Getting information about project
 
-You can also get information about a particular mod by knowing its ID:
+You can also get information about a particular project by knowing its ID or Slug:
 
 ```python
-mod = client.get_mod("AANobbMI")
-print(mod.title)
-print(mod.description)
-print(mod.downloads)
+from modrinthpy import ModrinthClient
+
+client = ModrinthClient()
+
+async def get():
+    mod = await client.get_project(slug="sodium")
+    print(mod.title)
+    print(mod.description)
+    print(mod.downloads)
+
+client.run(get())
 ```
 
-### Downloading a mod file 
+<!-- ### Downloading a mod file 
 
 You can find available downloads and download them:
 
 ```python
-mod = client.get_mod("AANobbMI")
-for version in mod.versions:
-    print(version.filename)
-    
-    client.download_file(version, path="./downloads/")
+...
 ```-->
 
 <!--### Features - Search for mods by name, filters and categories. - Get detailed information about mods. - Download mods and mod versions. - Support for various parameters and filters for more accurate search.

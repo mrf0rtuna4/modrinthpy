@@ -40,9 +40,6 @@ class BaseModelWithAutoMapping:
         return cls(data)
 
     def to_dict(self):
-        """
-        Converts the model instance into a dictionary, including only the annotated attributes.
-        """
         cls = self.__class__
         hints = getattr(cls, '__annotations__', {})
         return {
