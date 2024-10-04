@@ -1,11 +1,12 @@
 import json
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple
 
-from requests_toolbelt import MultipartEncoder
-from .models import Project, Version
-from .objects import CreatableProject
 from aiohttp import FormData
-import json
+from requests_toolbelt import MultipartEncoder
+
+from .models import Version
+from .objects import CreatableProject
+
 
 def create_project_payload(project: CreatableProject) -> FormData:
     """

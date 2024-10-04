@@ -46,7 +46,6 @@ class BaseModelWithAutoMapping:
             key: getattr(self, key, getattr(cls, key, None)) for key in hints
         }
 
-
     def __repr__(self) -> str:
         annotations = list(self.__annotations__.keys())[:3]
         repr_str = ", ".join([f"{key}={getattr(self, key, None)}" for key in annotations])

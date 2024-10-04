@@ -2,6 +2,7 @@ from modrinthpy import ModrinthClient
 
 client = ModrinthClient()
 
+
 def display_search_results(results):
     if not results:
         print("No projects found.")
@@ -10,9 +11,11 @@ def display_search_results(results):
         for project in results:
             print(f"Slug: {project.slug} | Title: {project.title}")
 
+
 async def run_search(search_query):
     results = await client.search_projects(search_query)
     display_search_results(results)
+
 
 search = input("Write Prompt: ")
 
