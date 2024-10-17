@@ -4,8 +4,7 @@ from typing import List, Tuple
 from aiohttp import FormData
 from requests_toolbelt import MultipartEncoder
 
-from .models import Version
-from .objects import CreatableProject
+from .objects import CreatableProject, CreatableVersion
 
 
 def create_project_payload(project: CreatableProject) -> FormData:
@@ -24,19 +23,25 @@ def create_project_payload(project: CreatableProject) -> FormData:
     return fields
 
 
-def create_version_payload(version: Version, files: List[Tuple[str, Tuple[str, bytes, str]]]) -> MultipartEncoder:
+def create_version_payload(version: dict, files: List[Tuple[str, bytes, str]]) -> FormData:
     """
-    Creates a payload to create a version of the project. 
+    Creates a payload for the version creation request using aiohttp.FormData.
     
-    :param version: An instance of the Version model.
-    :param files: List of files to load. 
-    :return: MultipartEncoder to send in the request.
+    :param version: An instance of the CreatableVersion model.
+    :param files: List of files to upload.
+    :return: FormData to send in the request.
     """
-    fields = {
-        'data': (None, json.dumps(version), 'application/json'),
-    }
+    form_data = FormData()
 
-    for i, file in enumerate(files):
-        fields[f'file_{i}'] = file
+    form_data.add_field('data', json.dumps(version), content_type='application/json')
 
-    return MultipartEncoder(fields=fields)
+    # Добавляем файлы
+    for i, (filename, file_content, mime_type) in enumerate(files):
+        form_data.add_field(
+            f'file_{i}',
+            file_content,
+            filename=filename,
+            content_type=mime_type
+        )
+
+    return form_data

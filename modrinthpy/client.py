@@ -9,6 +9,7 @@ from .decorators import check_project
 from .exceptions import ModrinthAPIError, UnauthorizedError
 from .models import Project, Version, User, Notification, SearchResult
 from .utils import create_project_payload, create_version_payload
+from .objects import CreatableProject, CreatableVersion
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -105,12 +106,13 @@ class BaseModrinthClient:
         return Version(response)
 
     async def create_version(self, version_data: Dict[str, Any],
-                             files: List[Tuple[str, Tuple[str, bytes, str]]]) -> Version:
+                         files: List[Tuple[str, Tuple[str, bytes, str]]]) -> Version:
         self._require_api_token()
-        payload = create_version_payload(version_data, files)
-        headers = {"Content-Type": payload.content_type}
-        response = await self._request("POST", "version", data=payload, headers=headers)
+        version = CreatableVersion(**version_data)
+        payload = create_version_payload(version.to_dict(), files)
+        response = await self._request("POST", "version", data=payload)
         return Version(response)
+
 
     async def update_version(self, version_id: str, data: Dict[str, Any]) -> Version:
         self._require_api_token()

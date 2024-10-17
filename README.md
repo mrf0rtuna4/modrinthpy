@@ -83,7 +83,7 @@ You can find available downloads and download them:
 
 <!--### Features - Search for mods by name, filters and categories. - Get detailed information about mods. - Download mods and mod versions. - Support for various parameters and filters for more accurate search.
 
-## Документация
+## Documentation
 
 [Coming soon..]
 <!--Full documentation and examples of use are available at [GitHub Pages](https://github.com/mrf0rtuna4/modrinthpy/wiki).-->

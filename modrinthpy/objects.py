@@ -1,5 +1,5 @@
 from typing import List, Optional, Dict
-from .models import BaseModelWithAutoMapping, DonationUrl
+from .models import BaseModelWithAutoMapping, DonationUrl, Dependency
 
 class CreatableProject(BaseModelWithAutoMapping):
     slug: str
@@ -28,3 +28,18 @@ class CreatableProject(BaseModelWithAutoMapping):
     def __init__(self, data: Optional[dict] = None, **kwargs):
         super().__init__(data, **kwargs)
 
+
+class CreatableVersion(BaseModelWithAutoMapping):
+    name: str
+    version_number: str
+    changelog: Optional[str]
+    dependencies: List['Dependency']
+    game_versions: List[str]
+    version_type: str  # Enum: 'release', 'beta', 'alpha'
+    loaders: List[str]
+    featured: bool
+    status: Optional[str]  # Enum: 'listed', 'archived', 'draft', 'unlisted', 'scheduled', 'unknown'
+    requested_status: Optional[str]
+    project_id: str
+    file_parts: List[str]
+    primary_file: Optional[str]
