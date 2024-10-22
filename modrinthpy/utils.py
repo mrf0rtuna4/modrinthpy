@@ -35,7 +35,6 @@ def create_version_payload(version: dict, files: List[Tuple[str, bytes, str]]) -
 
     form_data.add_field('data', json.dumps(version), content_type='application/json')
 
-    # Добавляем файлы
     for i, (filename, file_content, mime_type) in enumerate(files):
         form_data.add_field(
             f'file_{i}',

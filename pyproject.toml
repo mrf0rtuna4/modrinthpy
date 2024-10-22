@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "modrinthpy"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Python client for the Modrinth API"
 authors = [
     { name="mrf0rtuna4", email="heypers.team@gmail.com" }
