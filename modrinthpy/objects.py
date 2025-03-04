@@ -1,5 +1,7 @@
 from typing import List, Optional, Dict
+from enum import Enum
 from .models import BaseModelWithAutoMapping, DonationUrl, Dependency
+
 
 class CreatableProject(BaseModelWithAutoMapping):
     slug: str
@@ -35,7 +37,7 @@ class CreatableVersion(BaseModelWithAutoMapping):
     changelog: Optional[str]
     dependencies: List['Dependency']
     game_versions: List[str]
-    version_type: str  # Enum: 'release', 'beta', 'alpha'
+    version_type: Enum('version_type', ['release', 'beta', 'alpha'])  # Enum: 'release', 'beta', 'alpha'
     loaders: List[str]
     featured: bool
     status: Optional[str]  # Enum: 'listed', 'archived', 'draft', 'unlisted', 'scheduled', 'unknown'

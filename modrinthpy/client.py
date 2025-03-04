@@ -53,8 +53,8 @@ class BaseModrinthClient:
         return Project(response)
 
     @check_project
-    async def add_gallery_image(self, ext: str, featured: bool, id: str = None, slug: str = None, **kwargs) -> Dict[
-        str, Any]:
+    async def add_gallery_image(self, ext: str, featured: bool,
+                                id: str = None, slug: str = None, **kwargs) -> Dict[str, Any]:
         self._require_api_token()
         response = await self._request("POST", f"project/{id or slug}/gallery",
                                        params={"ext": json.dumps(ext), "featured": json.dumps(featured),
@@ -106,13 +106,12 @@ class BaseModrinthClient:
         return Version(response)
 
     async def create_version(self, version_data: Dict[str, Any],
-                         files: List[Tuple[str, Tuple[str, bytes, str]]]) -> Version:
+                             files: List[Tuple[str, Tuple[str, bytes, str]]]) -> Version:
         self._require_api_token()
         version = CreatableVersion(**version_data)
         payload = create_version_payload(version.to_dict(), files)
         response = await self._request("POST", "version", data=payload)
         return Version(response)
-
 
     async def update_version(self, version_id: str, data: Dict[str, Any]) -> Version:
         self._require_api_token()
